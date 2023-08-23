@@ -69,6 +69,7 @@
      */
     constructor(player, options) {
       super(player, options);
+      this.setIcon('cog');
       const qualityLevels = this.player_.qualityLevels();
 
       // Handle options: We accept an options.default value of ( high || low )
@@ -195,13 +196,23 @@
       super(player, settings);
       this.options_ = settings;
       this.player_ = player;
-      this.on(player, 'ready', () => {
+      this.player_.addClass('vjs-http-source-selector');
+      this.on(player, ['canplay','ready'], () => {
         this.reset();
         this.init();
       });
     }
     init() {
-      this.player_.addClass('vjs-http-source-selector');
+      
+      if (document.getElementsByClassName("vjs-http-source-selector vjs-menu-button vjs-menu-button-popup vjs-control vjs-button").length!=0){
+      	if (this.player_.qualityLevels().length===0) {
+          document.getElementsByClassName("vjs-http-source-selector vjs-menu-button vjs-menu-button-popup vjs-control vjs-button")[0].style.display = 'none';
+      		}
+      else {
+       document.getElementsByClassName("vjs-http-source-selector vjs-menu-button vjs-menu-button-popup vjs-control vjs-button")[0].style.display = 'block';
+            };
+      };
+      
       this.player_.videojsHTTPSouceSelectorInitialized = true;
       if (this.player_.techName_ === 'Html5') {
         this.on(this.player_, 'loadedmetadata', () => {
@@ -213,7 +224,7 @@
       }
     }
     reset() {
-      this.player_.removeClass('vjs-http-source-selector');
+      
       if (this.player_.videojsHTTPSouceSelectorInitialized === true) {
         if (!this.player_.controlBar.getChild('SourceMenuButton')) {
           this.player_.controlBar.removeChild('SourceMenuButton', {});
